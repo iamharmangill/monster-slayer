@@ -3,48 +3,78 @@ new Vue({
     data: {
         playerHealth: 100,
         monsterHealth: 100,
-        gameIsRunning: false
+        gameIsRunning: false,
+        turns: []
     },
+
     methods: {
         startGame: function () {
             this.gameIsRunning = true;
             this.playerHealth = 100;
             this.monsterHealth = 100;
+            this.turns = []
         },
 
         attack: function () {
-            this.monsterHealth -= this.calculateDamage(3, 10);
+            var damage = this.calculateDamage(3, 10);
+            this.turns.unshift({
+                isPlayer: true,
+                text: 'Player hits Monster by ' + damage
+            });
+            this.monsterHealth -= damage;
             if (this.checkWin()) {
                 return;
             }
 
-            this.playerHealth -= this.calculateDamage(5, 12);
-            this.checkWin();
+            this.monsterAttack();
         },
+
         specialAttack: function () {
-            this.monsterHealth -= this.calculateDamage(7, 15);
+            var damage = this.calculateDamage(7, 15);
+            this.monsterHealth -= damage;
+            this.turns.unshift({
+                isPlayer: true,
+                text: 'Player hits Monster hard by ' + damage
+            });
             if (this.checkWin()) {
                 return;
             }
-
-            this.playerHealth -= this.calculateDamage(5, 12);
-            this.checkWin();
+            this.monsterAttack();   
         },
+
         heal: function () {
-            this.playerHealth -= this.calculateDamage(5, 12);
-            if (this.checkWin()) {
-                return;
+            if (this.playerHealth < 90) {
+                this.playerHealth += 10;
             }
-
-            this.playerHealth += this.calculateDamage(8, 15);
-            this.checkWin();
+            else {
+                this.playerHealth = 100;
+            }
+            this.turns.unshift({
+                isPlayer: true,
+                text: 'Player heals by 10'
+            });
+            
+            this.monsterAttack();
         },
+
         giveUp: function () {
-
+            this.gameIsRunning = false;
         },
+
         calculateDamage: function (min, max) {
             return Math.max(Math.floor(Math.random() * max + 1), min);
         },
+
+        monsterAttack: function() {
+            var damage = this.calculateDamage(5, 12);
+            this.playerHealth -= damage;
+            this.checkWin();
+            this.turns.unshift({
+                isPlayer: false,
+                text: 'Monster hits Player by ' + damage
+            });
+        },
+
         checkWin: function () {
             if (this.monsterHealth <= 0) {
                 if (confirm('You Won! New Game?')) {

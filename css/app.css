@@ -93,3 +93,17 @@ button {
 #give-up:hover {
     background-color: #c7c7c7;
 }
+
+.mons {
+    font-size: 100px;
+    text-align: center;
+    margin: 20px;
+}
+
+#app{
+
+    background-image: url(../the-grinch-2018-s8.jpg);
+    background-size: cover;
+    background: inherit;
+    opacity: 70;
+}
